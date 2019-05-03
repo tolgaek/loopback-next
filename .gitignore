@@ -13,6 +13,8 @@ benchmark/dist
 .sandbox
 packages/cli/generators/datasource/connectors.json
 docs/site/readmes
+docs/apidocs/reports-temp
+docs/apidocs/models
 
 # Exclude all files under sandbox except README.md and example
 /sandbox/*

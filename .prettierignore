@@ -1,5 +1,7 @@
 /coverage
 **/*/api-docs
+/docs/apidocs
+/docs/site/apidocs
 packages/cli/generators/*/templates
 **/.sandbox
 packages/*/dist
