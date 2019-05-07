@@ -49,11 +49,18 @@ export async function getPackages(
  */
 export function isPublicTSPackage(pkg: LernaPackage) {
   if (pkg.private) return false;
+
+  /* istanbul ignore if  */
   if (pkg.name.startsWith('@loopback/example-')) return false;
 
-  if (!fs.existsSync(path.join(pkg.location, 'tsconfig.build.json')))
+  if (
+    !fs.existsSync(path.join(pkg.location, 'tsconfig.build.json')) &&
+    !fs.existsSync(path.join(pkg.location, 'tsconfig.json'))
+  ) {
     return false;
+  }
 
+  /* istanbul ignore if  */
   if (!fs.existsSync(path.join(pkg.location, 'dist/index.d.ts'))) return false;
 
   return true;

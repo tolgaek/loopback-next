@@ -7,7 +7,6 @@
   },
   "private": true,
   "scripts": {
-    "acceptance": "lb-mocha \"dist/__tests__/acceptance/**/*.js\"",
     "tsdocs": "npm run build && npm run -s extract-apidocs && npm run -s document-apidocs && npm run -s update-apidocs",
     "extract-apidocs": "node bin/extract-apis",
     "document-apidocs": "api-documenter markdown -i ../../docs/apidocs/models -o ../../docs/site/apidocs",
@@ -16,7 +15,6 @@
     "clean": "lb-clean loopback-tsdocs*.tgz dist package api-docs",
     "pretest": "npm run build",
     "test": "lb-mocha \"dist/__tests__/**/*.js\"",
-    "unit": "lb-mocha \"dist/__tests__/unit/**/*.js\"",
     "verify": "npm pack && tar xf loopback-tsdocs*.tgz && tree package && npm run clean"
   },
   "author": "IBM Corp.",
@@ -34,7 +32,8 @@
     "@loopback/tslint-config": "^2.0.4",
     "@types/debug": "^4.1.4",
     "@types/fs-extra": "^5.0.5",
-    "@types/node": "^10.11.2"
+    "@types/node": "^10.11.2",
+    "p-event": "^4.1.0"
   },
   "keywords": [
     "LoopBack",
@@ -47,7 +46,8 @@
     "index.d.ts",
     "dist",
     "src",
-    "!*/__tests__"
+    "!*/__tests__",
+    "!/fixtures"
   ],
   "publishConfig": {
     "access": "public"

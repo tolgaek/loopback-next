@@ -1,0 +1,8 @@
+{
+  "name": "pkg2",
+  "version": "1.0.0",
+  "description": "Test package 2",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "MIT"
+}

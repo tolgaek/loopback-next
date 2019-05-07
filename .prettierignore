@@ -3,6 +3,7 @@
 /docs/apidocs
 /docs/site/apidocs
 packages/cli/generators/*/templates
+packages/tsdocs/fixtures
 **/.sandbox
 packages/*/dist
 examples/*/dist

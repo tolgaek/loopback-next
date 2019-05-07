@@ -9,6 +9,7 @@ import {
   ApiDocsOptions,
   getPublicTSPackages,
   getUnscopedPackageName,
+  LernaPackage,
 } from './helper';
 
 const DEFAULT_API_DOCS_PATH = 'docs/site/apidocs';
@@ -28,9 +29,23 @@ export async function updateApiDocs(options: ApiDocsOptions = {}) {
   );
   const packages = await getPublicTSPackages(options.rootDir);
 
+  /* istanbul ignore if  */
   if (!packages.length) return;
-  const lernaRootDir = packages[0].rootPath;
 
+  await generateIndex(packages, options);
+  await addJekyllMetadata(packages[0].rootPath, options);
+}
+
+/**
+ * Generate `index.md` for apidocs
+ * @param packages Lerna packages
+ * @param options Apidocs options
+ */
+async function generateIndex(
+  packages: LernaPackage[],
+  options: ApiDocsOptions,
+) {
+  const lernaRootDir = packages[0].rootPath;
   const apiDocs = [
     `---
 lang: en
@@ -50,6 +65,7 @@ permalink: /doc/en/lb4/apidocs.index.html
 
   apiDocs.push('\n');
 
+  /* istanbul ignore if  */
   if (options.dryRun) {
     console.log(apiDocs.join('\n'));
     return;
@@ -62,11 +78,11 @@ permalink: /doc/en/lb4/apidocs.index.html
   );
   await fs.ensureDir(path.resolve(apiDocsIndex, '..'));
   await fs.writeFile(apiDocsIndex, apiDocs.join('\n'));
+
+  /* istanbul ignore if  */
   if (!options.silent) {
     console.log('%s is updated.', apiDocsIndex);
   }
-
-  await addJekyllMetadata(lernaRootDir, options);
 }
 
 /**
@@ -81,9 +97,11 @@ async function addJekyllMetadata(
   const apiDocsRoot = path.join(lernaRootDir, options.apiDocsPath!);
   const apiFiles = await fs.readdir(apiDocsRoot);
   for (const f of apiFiles) {
+    /* istanbul ignore if  */
     if (!options.silent) {
       console.log('Updating %s', f);
     }
+    /* istanbul ignore if  */
     if (!f.endsWith('.md') || f === 'index.md') continue;
     const name = f.replace(/\.md$/, '');
     const docFile = path.join(apiDocsRoot, f);
