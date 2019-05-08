@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+import {IConfigFile} from '@microsoft/api-extractor';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
@@ -105,6 +106,11 @@ export async function getPackagesWithTsDocs(
 }
 
 /**
+ * Default path for apidocs to be generated for loopback.io site
+ */
+export const DEFAULT_APIDOCS_GENERATION_PATH = 'docs/site/apidocs';
+
+/**
  * Options for api docs
  */
 export interface ApiDocsOptions {
@@ -121,13 +127,46 @@ export interface ApiDocsOptions {
    */
   rootDir?: string;
   /**
-   * Path to apidocs
+   * Path to tsdocs reports/models
    */
-  apiDocsPath?: string;
+  apiDocsExtractionPath?: string;
+  /**
+   * Path to target directory to generate apidocs
+   */
+  apiDocsGenerationPath?: string;
+
+  /**
+   * A flag to generate default package documentation
+   */
+  generateDefaultPackageDoc?: boolean;
+}
+
+/**
+ * Options to run api-extractor against the lerna repo
+ */
+export interface ExtractorOptions extends ApiDocsOptions {
   /**
    * Configuration for api-extractor
    */
+  config?: IConfigFile;
+  /**
+   * Custom TypeScript compiler dir
+   */
+  typescriptCompilerFolder?: string;
+  /**
+   * Path for tsconfig
+   */
+  tsconfigFilePath?: string;
+  /**
+   * mainEntryPointFilePath
+   */
+  mainEntryPointFilePath?: string;
 }
+
+/**
+ * Default path as the output directory for extracted api reports and models
+ */
+export const DEFAULT_APIDOCS_EXTRACTION_PATH = 'docs/apidocs';
 
 /**
  * Export the TypeScript path from `@loopback/build`

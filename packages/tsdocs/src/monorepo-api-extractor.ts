@@ -17,39 +17,13 @@ import * as debugFactory from 'debug';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import {
-  ApiDocsOptions,
+  DEFAULT_APIDOCS_EXTRACTION_PATH,
+  ExtractorOptions,
   getPackagesWithTsDocs,
   LernaPackage,
   typeScriptPath,
 } from './helper';
 const debug = debugFactory('loopback:tsdocs');
-
-/**
- * Options to run api-extractor against the lerna repo
- */
-export interface ExtractorOptions extends ApiDocsOptions {
-  /**
-   * Configuration for api-extractor
-   */
-  config?: IConfigFile;
-  /**
-   * Custom TypeScript compiler dir
-   */
-  typescriptCompilerFolder?: string;
-  /**
-   * Path for tsconfig
-   */
-  tsconfigFilePath?: string;
-  /**
-   * mainEntryPointFilePath
-   */
-  mainEntryPointFilePath?: string;
-}
-
-/**
- * Default path as the output directory for extracted api reports and models
- */
-const DEFAULT_TS_DOCS_PATH = 'docs/apidocs';
 
 /**
  * Run api-extractor for a lerna-managed monrepo
@@ -67,7 +41,7 @@ export async function runExtractorForMonorepo(options: ExtractorOptions = {}) {
   options = Object.assign(
     {
       rootDir: process.cwd(),
-      apiDocsPath: DEFAULT_TS_DOCS_PATH,
+      apiDocsExtractionPath: DEFAULT_APIDOCS_EXTRACTION_PATH,
       typescriptCompilerFolder: typeScriptPath,
       tsconfigFilePath: 'tsconfig.build.json',
       mainEntryPointFilePath: 'dist/index.d.ts',
@@ -114,10 +88,12 @@ export async function runExtractorForMonorepo(options: ExtractorOptions = {}) {
 function setupApiDocsDirs(lernaRootDir: string, options: ExtractorOptions) {
   /* istanbul ignore if  */
   if (options.dryRun) return;
-  const apiDocsPath = options.apiDocsPath!;
-  fs.ensureDirSync(path.join(lernaRootDir, `${apiDocsPath}/reports`));
-  fs.emptyDirSync(path.join(lernaRootDir, `${apiDocsPath}/models`));
-  fs.emptyDirSync(path.join(lernaRootDir, `${apiDocsPath}/reports-temp`));
+  const apiDocsExtractionPath = options.apiDocsExtractionPath!;
+  fs.ensureDirSync(path.join(lernaRootDir, `${apiDocsExtractionPath}/reports`));
+  fs.emptyDirSync(path.join(lernaRootDir, `${apiDocsExtractionPath}/models`));
+  fs.emptyDirSync(
+    path.join(lernaRootDir, `${apiDocsExtractionPath}/reports-temp`),
+  );
 }
 
 /**
@@ -131,21 +107,24 @@ function createRawExtractorConfig(
   options: ExtractorOptions,
 ) {
   const entryPoint = path.join(pkg.location, options.mainEntryPointFilePath!);
-  const apiDocsPath = options.apiDocsPath!;
+  const apiDocsExtractionPath = options.apiDocsExtractionPath!;
   let configObj: IConfigFile = {
     projectFolder: pkg.location,
     mainEntryPointFilePath: entryPoint,
     apiReport: {
       enabled: true,
-      reportFolder: path.join(pkg.rootPath, `${apiDocsPath}/reports`),
-      reportTempFolder: path.join(pkg.rootPath, `${apiDocsPath}/reports-temp`),
+      reportFolder: path.join(pkg.rootPath, `${apiDocsExtractionPath}/reports`),
+      reportTempFolder: path.join(
+        pkg.rootPath,
+        `${apiDocsExtractionPath}/reports-temp`,
+      ),
       reportFileName: '<unscopedPackageName>.api.md',
     },
     docModel: {
       enabled: true,
       apiJsonFilePath: path.join(
         pkg.rootPath,
-        `${apiDocsPath}/models/<unscopedPackageName>.api.json`,
+        `${apiDocsExtractionPath}/models/<unscopedPackageName>.api.json`,
       ),
     },
     messages: {

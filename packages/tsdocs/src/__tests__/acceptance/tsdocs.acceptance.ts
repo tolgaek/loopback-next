@@ -28,7 +28,7 @@ describe('tsdocs', function() {
     await runExtractorForMonorepo({
       rootDir: MONOREPO_ROOT,
       silent: true,
-      apiDocsPath: 'docs/apidocs',
+      apiDocsGenerationPath: 'docs/apidocs',
     });
 
     const dirs = await fs.readdir(APIDOCS_ROOT);
@@ -70,7 +70,7 @@ describe('tsdocs', function() {
     await updateApiDocs({
       rootDir: MONOREPO_ROOT,
       silent: true,
-      apiDocsPath: 'docs/site/apidocs',
+      apiDocsGenerationPath: 'docs/site/apidocs',
     });
 
     const files = await fs.readdir(SITE_APIDOCS_ROOT);
