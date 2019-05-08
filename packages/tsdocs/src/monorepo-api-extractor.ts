@@ -18,7 +18,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import {
   ApiDocsOptions,
-  getPublicTSPackages,
+  getPackagesWithTsDocs,
   LernaPackage,
   typeScriptPath,
 } from './helper';
@@ -46,10 +46,19 @@ export interface ExtractorOptions extends ApiDocsOptions {
   mainEntryPointFilePath?: string;
 }
 
+/**
+ * Default path as the output directory for extracted api reports and models
+ */
 const DEFAULT_TS_DOCS_PATH = 'docs/apidocs';
 
 /**
  * Run api-extractor for a lerna-managed monrepo
+ *
+ * @remarks
+ * The function performs the following steps:
+ * 1. Discover packages with tsdocs from the monorepo
+ * 2. Iterate through each package to run `api-extractor`
+ *
  * @param options Options for running api-extractor
  */
 export async function runExtractorForMonorepo(options: ExtractorOptions = {}) {
@@ -66,7 +75,7 @@ export async function runExtractorForMonorepo(options: ExtractorOptions = {}) {
     options,
   );
 
-  const packages = await getPublicTSPackages(options.rootDir);
+  const packages = await getPackagesWithTsDocs(options.rootDir);
 
   /* istanbul ignore if  */
   if (!packages.length) return;
@@ -98,6 +107,7 @@ export async function runExtractorForMonorepo(options: ExtractorOptions = {}) {
 
 /**
  * Set up dirs for apidocs
+ *
  * @param lernaRootDir Root dir of the monorepo
  * @param options Extractor options
  */
@@ -112,6 +122,7 @@ function setupApiDocsDirs(lernaRootDir: string, options: ExtractorOptions) {
 
 /**
  * Build extractor configuration object for the given package
+ *
  * @param pkg Lerna managed package
  * @param options Extractor options
  */
@@ -159,6 +170,7 @@ function createRawExtractorConfig(
 
 /**
  * Create and prepare the extractor config for invocation
+ *
  * @param pkg Lerna package
  * @param options Extractor options
  */
@@ -174,6 +186,7 @@ function buildExtractorConfig(pkg: LernaPackage, options: ExtractorOptions) {
 
 /**
  * Invoke the extractor
+ *
  * @param extractorConfig Resolved config
  * @param options Extractor options
  */

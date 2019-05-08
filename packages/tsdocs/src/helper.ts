@@ -9,19 +9,40 @@ import * as path from 'path';
 const Project = require('@lerna/project');
 
 /**
- * TypeScript definition for Lerna Package
+ * TypeScript definition for
+ * {@link https://github.com/lerna/lerna/blob/master/core/package/index.js | Lerna Package)
  */
 export interface LernaPackage {
+  /**
+   * Package name
+   */
   name: string;
+  /**
+   * Location of the package
+   */
   location: string;
+  /**
+   * Root directory of the monorepo
+   */
   rootPath: string;
+  /**
+   * Location of `package.json`
+   */
   manifestLocation: string;
+  /**
+   * Is it a private package?
+   */
   private: boolean;
 }
 
 /**
- * Get unscoped package name
- * @param name npm package name, such as `@loopback/context` or `express`
+ * Get un-scoped package name
+ *
+ * @example
+ * - '@loopback/context' => 'context'
+ * - 'express' => 'express'
+ *
+ * @param name Name of the npm package
  */
 export function getUnscopedPackageName(name: string) {
   if (name.startsWith('@')) {
@@ -31,7 +52,8 @@ export function getUnscopedPackageName(name: string) {
 }
 
 /**
- * Get lerna packages
+ * Get lerna packages and sorted them by location
+ *
  * @param rootDir Root directory to find lerna.json
  */
 export async function getPackages(
@@ -44,11 +66,15 @@ export async function getPackages(
 }
 
 /**
- * Check if a package is TypeScript project
+ * Check if a package should be processed for tsdocs
+ *
  * @param pkg Lerna package
  */
-export function isPublicTSPackage(pkg: LernaPackage) {
-  if (pkg.private) return false;
+export function shouldGenerateTsDocs(pkg: LernaPackage) {
+  // We generate tsdocs for `@loopback/tsdocs` even it's private at this moment
+  if (pkg.name === '@loopback/tsdocs') return true;
+
+  if (pkg.private && pkg.name !== '@loopback/tsdocs') return false;
 
   /* istanbul ignore if  */
   if (pkg.name.startsWith('@loopback/example-')) return false;
@@ -67,14 +93,15 @@ export function isPublicTSPackage(pkg: LernaPackage) {
 }
 
 /**
- * Get an array lerna-managed public TypeScript packages
- * @param rootDir
+ * Get an array of lerna-managed TypeScript packages to generate tsdocs
+ *
+ * @param rootDir Root directory to find the monorepo
  */
-export async function getPublicTSPackages(
+export async function getPackagesWithTsDocs(
   rootDir = process.cwd(),
 ): Promise<LernaPackage[]> {
   const packages = await getPackages(rootDir);
-  return packages.filter(isPublicTSPackage);
+  return packages.filter(shouldGenerateTsDocs);
 }
 
 /**
