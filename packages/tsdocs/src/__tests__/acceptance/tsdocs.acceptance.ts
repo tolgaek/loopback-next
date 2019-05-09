@@ -29,6 +29,7 @@ describe('tsdocs', function() {
       rootDir: MONOREPO_ROOT,
       silent: true,
       apiDocsGenerationPath: 'docs/apidocs',
+      apiReportEnabled: true,
     });
 
     const dirs = await fs.readdir(APIDOCS_ROOT);

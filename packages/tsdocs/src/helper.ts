@@ -161,6 +161,10 @@ export interface ExtractorOptions extends ApiDocsOptions {
    * mainEntryPointFilePath
    */
   mainEntryPointFilePath?: string;
+  /**
+   * A flag to control if `apiReport` should be enabled
+   */
+  apiReportEnabled?: boolean;
 }
 
 /**

@@ -89,8 +89,12 @@ function setupApiDocsDirs(lernaRootDir: string, options: ExtractorOptions) {
   /* istanbul ignore if  */
   if (options.dryRun) return;
   const apiDocsExtractionPath = options.apiDocsExtractionPath!;
-  fs.ensureDirSync(path.join(lernaRootDir, `${apiDocsExtractionPath}/reports`));
+
   fs.emptyDirSync(path.join(lernaRootDir, `${apiDocsExtractionPath}/models`));
+
+  if (!options.apiReportEnabled) return;
+
+  fs.ensureDirSync(path.join(lernaRootDir, `${apiDocsExtractionPath}/reports`));
   fs.emptyDirSync(
     path.join(lernaRootDir, `${apiDocsExtractionPath}/reports-temp`),
   );
@@ -112,7 +116,7 @@ function createRawExtractorConfig(
     projectFolder: pkg.location,
     mainEntryPointFilePath: entryPoint,
     apiReport: {
-      enabled: true,
+      enabled: !!options.apiReportEnabled,
       reportFolder: path.join(pkg.rootPath, `${apiDocsExtractionPath}/reports`),
       reportTempFolder: path.join(
         pkg.rootPath,
