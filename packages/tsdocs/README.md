@@ -13,7 +13,7 @@ It's built on top of https://api-extractor.com/:
 ### Build api reports and doc models
 
 ```sh
-npm run extract-apidocs
+npm run extract-apidocs -- --report
 ```
 
 The command above will traverse all TypeScript packages in the monorepo and run
@@ -41,6 +41,12 @@ npm run update-apidocs
 
 It adds Jekyll metadata to markdown files in `loopback-next/docs/site/apidocs`
 and generates `loopback-next/docs/site/apidocs/index.md` as the index page.
+
+To run all steps together:
+
+```sh
+npm run build:apidocs
+```
 
 ## Installation
 
