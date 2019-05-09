@@ -8,14 +8,15 @@ import {Request} from '@loopback/rest';
 import {expect} from '@loopback/testlab';
 import {AuthenticateFn, AuthenticationBindings, UserProfile} from '../../..';
 import {AuthenticateActionProvider} from '../../../providers';
+import {AuthenticationStrategy} from '../../../types';
 import {MockStrategy} from '../fixtures/mock-strategy';
 
-describe.skip('AuthenticateActionProvider', () => {
+describe('AuthenticateActionProvider', () => {
   describe('constructor()', () => {
     it('instantiateClass injects authentication.strategy in the constructor', async () => {
       const context = new Context();
       const strategy = new MockStrategy();
-      //context.bind(AuthenticationBindings.STRATEGY).to(strategy);
+      context.bind(AuthenticationBindings.STRATEGY).to(strategy);
       const provider = await instantiateClass(
         AuthenticateActionProvider,
         context,
@@ -52,7 +53,7 @@ describe.skip('AuthenticateActionProvider', () => {
     describe('context.get(provider_key)', () => {
       it('returns a function which authenticates a request and returns a user', async () => {
         const context: Context = new Context();
-        //context.bind(AuthenticationBindings.STRATEGY).to(strategy);
+        context.bind(AuthenticationBindings.STRATEGY).to(strategy);
         context
           .bind(AuthenticationBindings.AUTH_ACTION)
           .toProvider(AuthenticateActionProvider);
@@ -64,9 +65,12 @@ describe.skip('AuthenticateActionProvider', () => {
         expect(user).to.be.equal(mockUser);
       });
 
-      it('throws an error if the injected passport strategy is not valid', async () => {
+      // This PoC is in progress, will recover the test asap
+      it.skip('throws an error if the injected passport strategy is not valid', async () => {
         const context: Context = new Context();
-        //context.bind(AuthenticationBindings.STRATEGY).to({} as Strategy);
+        context
+          .bind(AuthenticationBindings.STRATEGY)
+          .to({} as AuthenticationStrategy);
         context
           .bind(AuthenticationBindings.AUTH_ACTION)
           .toProvider(AuthenticateActionProvider);
@@ -85,7 +89,7 @@ describe.skip('AuthenticateActionProvider', () => {
 
       it('throws Unauthorized error when authentication fails', async () => {
         const context: Context = new Context();
-        //context.bind(AuthenticationBindings.STRATEGY).to(strategy);
+        context.bind(AuthenticationBindings.STRATEGY).to(strategy);
         context
           .bind(AuthenticationBindings.AUTH_ACTION)
           .toProvider(AuthenticateActionProvider);
@@ -107,10 +111,10 @@ describe.skip('AuthenticateActionProvider', () => {
     function givenAuthenticateActionProvider() {
       strategy = new MockStrategy();
       strategy.setMockUser(mockUser);
-      // provider = new AuthenticateActionProvider(
-      //   () => Promise.resolve(strategy),
-      //   u => (currentUser = u),
-      // );
+      provider = new AuthenticateActionProvider(
+        () => Promise.resolve(strategy),
+        u => (currentUser = u),
+      );
       currentUser = undefined;
     }
   });
