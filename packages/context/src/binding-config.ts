@@ -62,7 +62,7 @@ export function configBindingKeyFor<ConfigValueType = unknown>(
   configPath?: string,
 ) {
   return BindingKey.create<ConfigValueType>(
-    BindingKey.buildKeyForConfig(key),
+    BindingKey.buildKeyForConfig<ConfigValueType>(key).toString(),
     configPath,
   );
 }

@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import {expect} from '@loopback/testlab';
-import {config, configBindingKeyFor, Context, ContextView} from '../..';
+import {config, configBindingKeyFor, Context, ContextView, Getter} from '../..';
 
 describe('Context bindings - injecting configuration for bound artifacts', () => {
   let ctx: Context;
@@ -83,7 +83,7 @@ describe('Context bindings - injecting configuration for bound artifacts', () =>
     class Logger {
       constructor(
         @config.getter()
-        public configGetter: () => Promise<LoggerConfig | undefined>,
+        public configGetter: Getter<LoggerConfig | undefined>,
       ) {}
     }
 
@@ -98,10 +98,17 @@ describe('Context bindings - injecting configuration for bound artifacts', () =>
     expect(configObj).to.eql({level: 'INFO'});
 
     // Update logger configuration
-    ctx.configure(LOGGER_KEY).to({level: 'DEBUG'});
+    const configBinding = ctx.configure(LOGGER_KEY).to({level: 'DEBUG'});
 
     configObj = await logger.configGetter();
     expect(configObj).to.eql({level: 'DEBUG'});
+
+    // Now remove the logger configuration
+    ctx.unbind(configBinding.key);
+
+    // configGetter returns undefined as config is optional by default
+    configObj = await logger.configGetter();
+    expect(configObj).to.be.undefined();
   });
 
   it('injects a view to access config', async () => {

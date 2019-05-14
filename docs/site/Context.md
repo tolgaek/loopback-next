@@ -610,6 +610,12 @@ appCtx.bind('servers.RestServer.server2').toClass(RestServer);
 appCtx.configure('servers.RestServer.server2').to({protocol: 'http', port: 80});
 ```
 
+Please note that `@config.*` is different from `@inject.*` as `@config.*`
+injects configuration based on the current binding where `@config.*` is applied.
+No hard-coded binding key is needed. The `@config.*` also allows the same class
+such as `RestServer` to be bound to different keys with different configurations
+as illustrated in the code snippet above.
+
 ### Allow configuration to be changed dynamically
 
 Some configurations are designed to be changeable dynamically, for example, the

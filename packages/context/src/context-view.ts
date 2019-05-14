@@ -165,10 +165,9 @@ export class ContextView<T = unknown> extends EventEmitter
     const values = await this.values(session);
     if (values.length === 0) return undefined;
     if (values.length === 1) return values[0];
-    else
-      throw new Error(
-        'The ContextView has more than one values. Use values() to access them.',
-      );
+    throw new Error(
+      'The ContextView has more than one values. Use values() to access them.',
+    );
   }
 }
 

@@ -30,6 +30,11 @@ export namespace ContextTags {
   export const KEY = 'key';
 
   /**
+   * Binding tag to associate a configuration binding with the target binding key
+   */
+  export const CONFIGURATION_OF = 'configurationOf';
+
+  /**
    * Binding tag for global interceptors
    */
   export const GLOBAL_INTERCEPTOR = 'globalInterceptor';

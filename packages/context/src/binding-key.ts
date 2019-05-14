@@ -104,14 +104,18 @@ export class BindingKey<ValueType> {
     );
   }
 
+  /**
+   * Name space for configuration binding keys
+   */
   static CONFIG_NAMESPACE = '$config';
+
   /**
    * Build a binding key for the configuration of the given binding.
    * The format is `<key>:$config`
    *
-   * @param key The binding key that accepts the configuration
+   * @param key Key of the target binding to be configured
    */
-  static buildKeyForConfig(key: BindingAddress<unknown> = '') {
+  static buildKeyForConfig<T>(key: BindingAddress = ''): BindingAddress<T> {
     const suffix = BindingKey.CONFIG_NAMESPACE;
     const bindingKey = key ? `${key}:${suffix}` : suffix;
     return bindingKey;

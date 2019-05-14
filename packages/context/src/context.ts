@@ -374,10 +374,8 @@ export class Context extends EventEmitter {
   configure<ConfigValueType = BoundValue>(
     key: BindingAddress = '',
   ): Binding<ConfigValueType> {
-    const keyForConfig = BindingKey.buildKeyForConfig(key);
-    const bindingForConfig = this.bind<ConfigValueType>(keyForConfig).tag({
-      config: key,
-    });
+    const bindingForConfig = Binding.configure<ConfigValueType>(key);
+    this.add(bindingForConfig);
     return bindingForConfig;
   }
 
@@ -468,9 +466,9 @@ export class Context extends EventEmitter {
       resolutionOptions,
     );
     if (isPromiseLike(valueOrPromise)) {
+      const prop = configPath ? ` property ${configPath}` : '';
       throw new Error(
-        `Cannot get config[${configPath ||
-          ''}] for ${key} synchronously: the value is a promise`,
+        `Cannot get config${prop} for ${key} synchronously: the value is a promise`,
       );
     }
     return valueOrPromise;

@@ -9,6 +9,7 @@ import {
   BindingKey,
   ConfigurationResolver,
   Context,
+  ContextTags,
   DefaultConfigurationResolver,
   ResolutionOptions,
   ValueOrPromise,
@@ -32,7 +33,9 @@ describe('Context binding configuration', () => {
       expect(bindingForConfig.key).to.equal(
         BindingKey.buildKeyForConfig('foo'),
       );
-      expect(bindingForConfig.tagMap).to.eql({config: 'foo'});
+      expect(bindingForConfig.tagMap).to.eql({
+        [ContextTags.CONFIGURATION_OF]: 'foo',
+      });
     });
 
     it('configures options for a binding after it is bound', () => {
@@ -41,7 +44,9 @@ describe('Context binding configuration', () => {
       expect(bindingForConfig.key).to.equal(
         BindingKey.buildKeyForConfig('foo'),
       );
-      expect(bindingForConfig.tagMap).to.eql({config: 'foo'});
+      expect(bindingForConfig.tagMap).to.eql({
+        [ContextTags.CONFIGURATION_OF]: 'foo',
+      });
     });
   });
 
@@ -51,7 +56,7 @@ describe('Context binding configuration', () => {
       expect(await ctx.getConfig('foo')).to.eql({x: 1});
     });
 
-    it('gets local config for a binding', async () => {
+    it('gets config for a binding with configPath', async () => {
       ctx
         .configure('foo')
         .toDynamicValue(() => Promise.resolve({a: {x: 0, y: 0}}));
@@ -86,10 +91,16 @@ describe('Context binding configuration', () => {
       expect(ctx.getConfigSync('foo')).to.eql({x: 1});
     });
 
+    it('gets config for a binding with configPath', () => {
+      ctx.configure('foo').to({x: 1});
+      expect(ctx.getConfigSync('foo', 'x')).to.eql(1);
+      expect(ctx.getConfigSync('foo', 'y')).to.be.undefined();
+    });
+
     it('throws a helpful error when the config is async', () => {
       ctx.configure('foo').toDynamicValue(() => Promise.resolve('bar'));
       expect(() => ctx.getConfigSync('foo')).to.throw(
-        /Cannot get config\[\] for foo synchronously: the value is a promise/,
+        /Cannot get config for foo synchronously: the value is a promise/,
       );
     });
   });
@@ -101,7 +112,7 @@ describe('Context binding configuration', () => {
         configPath?: string,
         resolutionOptions?: ResolutionOptions,
       ): ValueOrPromise<ConfigValueType | undefined> {
-        return ((key + '.config') as unknown) as ConfigValueType;
+        return (`Dummy config for ${key}` as unknown) as ConfigValueType;
       }
     }
     it('gets default resolver', () => {
@@ -112,7 +123,7 @@ describe('Context binding configuration', () => {
     it('allows custom resolver', () => {
       ctx.configResolver = new MyConfigResolver();
       const config = ctx.getConfigSync('xyz');
-      expect(config).to.equal('xyz.config');
+      expect(config).to.equal('Dummy config for xyz');
     });
 
     it('allows custom resolver bound to the context', () => {
@@ -120,7 +131,7 @@ describe('Context binding configuration', () => {
         .bind(`${BindingKey.CONFIG_NAMESPACE}.resolver`)
         .toClass(MyConfigResolver);
       const config = ctx.getConfigSync('xyz');
-      expect(config).to.equal('xyz.config');
+      expect(config).to.equal('Dummy config for xyz');
       expect(ctx.configResolver).to.be.instanceOf(MyConfigResolver);
     });
   });

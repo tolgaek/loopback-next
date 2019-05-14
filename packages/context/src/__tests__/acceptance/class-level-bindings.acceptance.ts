@@ -458,14 +458,14 @@ describe('Context bindings - Injecting dependencies of classes', () => {
 
   it('injects a nested property', async () => {
     class TestComponent {
-      constructor(@inject('config#test') public configVal: string) {}
+      constructor(@inject('config#test') public configForTest: string) {}
     }
 
     ctx.bind('config').to({test: 'test-config'});
     ctx.bind('component').toClass(TestComponent);
 
     const resolved = await ctx.get<TestComponent>('component');
-    expect(resolved.configVal).to.equal('test-config');
+    expect(resolved.configForTest).to.equal('test-config');
   });
 
   describe('@inject.binding', () => {
@@ -769,7 +769,7 @@ describe('Context bindings - Injecting dependencies of classes', () => {
     expect(store.optionXY).to.eql('y');
   });
 
-  it('injects config if the binding key is not present', () => {
+  it('injects config if the configPath is not present', () => {
     class Store {
       constructor(@config() public configObj: object) {}
     }
@@ -780,7 +780,7 @@ describe('Context bindings - Injecting dependencies of classes', () => {
     expect(store.configObj).to.eql({x: 1, y: 'a'});
   });
 
-  it("injects config if the binding key is ''", () => {
+  it("injects config if the configPath is ''", () => {
     class Store {
       constructor(@config('') public configObj: object) {}
     }
@@ -791,7 +791,7 @@ describe('Context bindings - Injecting dependencies of classes', () => {
     expect(store.configObj).to.eql({x: 1, y: 'a'});
   });
 
-  it('injects config if the binding key is a path', () => {
+  it('injects config with configPath', () => {
     class Store {
       constructor(@config('x') public optionX: number) {}
     }
@@ -802,7 +802,7 @@ describe('Context bindings - Injecting dependencies of classes', () => {
     expect(store.optionX).to.eql(1);
   });
 
-  it('injects undefined option if key not found', () => {
+  it('injects undefined option if configPath not found', () => {
     class Store {
       constructor(@config('not-exist') public option: string | undefined) {}
     }
@@ -813,7 +813,7 @@ describe('Context bindings - Injecting dependencies of classes', () => {
     expect(store.option).to.be.undefined();
   });
 
-  it('injects a config property based on the parent binding', async () => {
+  it('injects a config property for different bindings with the same class', async () => {
     class Store {
       constructor(
         @config('x') public optionX: number,
@@ -838,11 +838,11 @@ describe('Context bindings - Injecting dependencies of classes', () => {
 
   it('injects undefined config if no binding is present', async () => {
     class Store {
-      constructor(@config('x') public configVal: string | undefined) {}
+      constructor(@config('x') public settings: object | undefined) {}
     }
 
     const store = await instantiateClass(Store, ctx);
-    expect(store.configVal).to.be.undefined();
+    expect(store.settings).to.be.undefined();
   });
 
   it('injects config from config binding', () => {

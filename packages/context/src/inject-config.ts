@@ -12,37 +12,38 @@ import {ResolutionSession} from './resolution-session';
 import {getDeepProperty, ValueOrPromise} from './value-promise';
 
 /**
-   * Inject a property from `config` of the current binding. If no corresponding
-   * config value is present, `undefined` will be injected.
-   *
-   * @example
-   * ```ts
-   * class Store {
-   *   constructor(
-   *     @config('x') public optionX: number,
-   *     @config('y') public optionY: string,
-   *   ) { }
-   * }
-   *
-   * ctx.configure('store1', { x: 1, y: 'a' });
-   * ctx.configure('store2', { x: 2, y: 'b' });
-   *
-   * ctx.bind('store1').toClass(Store);
-   * ctx.bind('store2').toClass(Store);
-   *
-   *  const store1 = ctx.getSync('store1');
-   *  expect(store1.optionX).to.eql(1);
-   *  expect(store1.optionY).to.eql('a');
-
-   * const store2 = ctx.getSync('store2');
-   * expect(store2.optionX).to.eql(2);
-   * expect(store2.optionY).to.eql('b');
-   * ```
-   *
-   * @param configPath Optional property path of the config. If is `''` or not
-   * present, the `config` object will be returned.
-   * @param metadata Optional metadata to help the injection
-   */
+ * Inject a property from `config` of the current binding. If no corresponding
+ * config value is present, `undefined` will be injected as the configuration
+ * binding is resolved with `optional: true` by default.
+ *
+ * @example
+ * ```ts
+ * class Store {
+ *   constructor(
+ *     @config('x') public optionX: number,
+ *     @config('y') public optionY: string,
+ *   ) { }
+ * }
+ *
+ * ctx.configure('store1', { x: 1, y: 'a' });
+ * ctx.configure('store2', { x: 2, y: 'b' });
+ *
+ * ctx.bind('store1').toClass(Store);
+ * ctx.bind('store2').toClass(Store);
+ *
+ * const store1 = ctx.getSync('store1');
+ * expect(store1.optionX).to.eql(1);
+ * expect(store1.optionY).to.eql('a');
+ *
+ * const store2 = ctx.getSync('store2');
+ * expect(store2.optionX).to.eql(2);
+ * expect(store2.optionY).to.eql('b');
+ * ```
+ *
+ * @param configPath Optional property path of the config. If is `''` or not
+ * present, the `config` object will be returned.
+ * @param metadata Optional metadata to help the injection
+ */
 export function config(configPath?: string, metadata?: InjectionMetadata) {
   configPath = configPath || '';
   metadata = Object.assign(
