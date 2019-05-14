@@ -65,8 +65,7 @@ describe('AuthenticateActionProvider', () => {
         expect(user).to.be.equal(mockUser);
       });
 
-      // This PoC is in progress, will recover the test asap
-      it.skip('throws an error if the injected passport strategy is not valid', async () => {
+      it('throws an error if the injected strategy is not valid', async () => {
         const context: Context = new Context();
         context
           .bind(AuthenticationBindings.STRATEGY)
@@ -84,7 +83,10 @@ describe('AuthenticateActionProvider', () => {
         } catch (exception) {
           error = exception;
         }
-        expect(error).to.have.property('message', 'invalid strategy parameter');
+        expect(error).to.have.property(
+          'message',
+          'strategy.authenticate is not a function',
+        );
       });
 
       it('throws Unauthorized error when authentication fails', async () => {

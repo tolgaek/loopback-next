@@ -20,11 +20,7 @@ describe('Strategy Adapter', () => {
         // override authenticate method to set calledFlag
         async authenticate(req: Request, options?: AuthenticateOptions) {
           calledFlag = true;
-          await MockPassportStrategy.prototype.authenticate.call(
-            this,
-            req,
-            options,
-          );
+          await super.authenticate(req, options);
         }
       }
       const strategy = new Strategy();
